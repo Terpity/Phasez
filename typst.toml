@@ -1,0 +1,13 @@
+[package]
+name = "phasez"
+version = "0.1.0"
+compiler = "0.12.0"
+entrypoint = "lib.typ"
+authors = ["Terpity", "Typst GmbH <https://typst.app>"]
+license = "MIT-0"
+description = "A Typst package for programmatically drawing phasor diagrams, built using CeTZ"
+keywords = ["Phasors", "CeTZ", "Electrical Engineering"]
+
+[template]
+path = "template"
+entrypoint = "main.typ"
