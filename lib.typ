@@ -51,19 +51,21 @@
         content: (padding: 1pt),
       )
 
-      let phasor(mag, angle, traces: false, label: true, colour: none, arcPath: none) = {
+      let phasor(
+        mag,
+        angle,
+        traces: false,
+        label: true,
+        colour: none,
+        arcPath: none,
+        labelOffset: (x: 0pt, y: 0pt, r: 0deg),
+      ) = {
         let getColour = (angle, saturation: 100%, value: 75%, alpha: 100%) => {
           if (colour != none) { colour.transparentize(100% - alpha) } else {
             color.hsv(angle * autoHueScale, saturation, if (greyscale) { 0% } else { value }, alpha)
           }
         }
 
-        line(
-          (0, 0),
-          (mag * calc.cos(angle), mag * calc.sin(angle)),
-          mark: (end: "stealth"),
-          stroke: { getColour(angle) },
-        )
         if traces {
           line(
             (mag * calc.cos(angle), mag * calc.sin(angle)),
@@ -93,9 +95,17 @@
             start: arcPath.start,
             stop: arcPath.end,
             radius: arcPath.rad,
-            stroke: if (colour != none) { colour } else { getColour(angle) },
+            stroke: if (arcPath.colour != none) { arcPath.colour } else if (colour != none) {
+              colour
+            } else { getColour(angle) },
             mode: "PIE",
-            fill: if (arcPath.doFill != false) { getColour(angle, alpha: 10%) },
+            fill: if (arcPath.doFill != false) {
+              if (arcPath.colour != none) {
+                arcPath.colour.transparentize(90%)
+              } else {
+                getColour(angle, alpha: 10%)
+              }
+            },
           )
           content(
             (
@@ -113,6 +123,12 @@
             anchor: "south",
           )
         }
+        line(
+          (0, 0),
+          (mag * calc.cos(angle), mag * calc.sin(angle)),
+          mark: (end: "stealth"),
+          stroke: { getColour(angle) },
+        )
       }
 
       grid(
@@ -178,9 +194,10 @@
               element.arc.doFill = true
             }
             if ("labelOffset" not in element.arc) {
-              element.arc.labelOffset.x = 0em
-              element.arc.labelOffset.y = 0em
-              element.arc.labelOffset.r = 0deg
+              element.arc.labelOffset = (x: 0em, y: 0em, r: 0deg)
+            }
+            if ("colour" not in element.arc) {
+              element.arc.colour = none
             }
           }
         }
