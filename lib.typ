@@ -99,10 +99,17 @@
           )
           content(
             (
-              arcPath.rad * 1.1 * calc.cos(arcPath.end - (arcPath.end - arcPath.start) / 2),
-              arcPath.rad * 1 * calc.sin(arcPath.end - (arcPath.end - arcPath.start) / 2),
+              arcPath.rad * 1.1 * calc.cos(arcPath.end - (arcPath.end - arcPath.start) / 2) + arcPath.labelOffset.x,
+              arcPath.rad * 1 * calc.sin(arcPath.end - (arcPath.end - arcPath.start) / 2) + arcPath.labelOffset.y,
             ),
-            text(size: .5em)[#repr(arcPath.end - arcPath.start).replace("deg", sym.degree)],
+            angle: arcPath.labelOffset.r,
+            text(size: .5em)[
+              #if (arcPath.label == none) {} else if (arcPath.label == true) {
+                repr(arcPath.end - arcPath.start).replace("deg", sym.degree)
+              } else {
+                arcPath.label
+              }
+            ],
             anchor: "south",
           )
         }
@@ -169,6 +176,11 @@
             }
             if ("doFill" not in element.arc) {
               element.arc.doFill = true
+            }
+            if ("labelOffset" not in element.arc) {
+              element.arc.labelOffset.x = 0em
+              element.arc.labelOffset.y = 0em
+              element.arc.labelOffset.r = 0deg
             }
           }
         }
