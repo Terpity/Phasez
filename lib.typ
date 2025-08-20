@@ -120,9 +120,9 @@
 
       // circle((0,0), radius: 1)
 
-      line((-(greatestMag + 0.5), 0), ((greatestMag + 0.5), 0), mark: (end: "stealth"))
+      line((-(greatestMag + 0.5), 0), ((greatestMag + 0.5), 0), mark: (start: "stealth", end: "stealth"))
       content((), axesLabels.at(0), anchor: "west")
-      line((0, -(greatestMag + 0.5)), (0, (greatestMag + 0.5)), mark: (end: "stealth"))
+      line((0, -(greatestMag + 0.5)), (0, (greatestMag + 0.5)), mark: (start: "stealth", end: "stealth"))
       content((), axesLabels.at(1), anchor: "south")
 
       for (x, ct) in xAxis {
