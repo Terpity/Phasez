@@ -28,6 +28,10 @@
       let xAxis = ()
       let furthestNeg = -(greatestMag)
 
+      // Fix for weird numbers :)
+      let furthestNeg = calc.round(furthestNeg)
+      let greatestMag = calc.round(greatestMag)
+
       while (furthestNeg <= greatestMag) {
         let x = furthestNeg
         let ct = $furthestNeg$
