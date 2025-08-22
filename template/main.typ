@@ -5,7 +5,7 @@
     phasorPlot(
       autoHueScale: 5,
       greyscale: true,
-      length: 6em,
+      length: 4cm,
       phasors: (
         (
           mag: 0.645,

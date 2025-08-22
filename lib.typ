@@ -6,8 +6,10 @@
 #let phasorPlot = (
   showLabels: true,
   axesLabels: ($Re$, $Im$),
+  xlimits: none,
+  ylimits: none,
   greyscale: false,
-  length: 10em,
+  length: 5cm,
   autoHueScale: 4,
   phasors: {},
 ) => {
@@ -18,27 +20,39 @@
       // set text(
       //   size: 15pt,
       // )
-
-      let greatestMag = 0
+      let greatestX = 0
       for element in phasors {
-        if element.mag > greatestMag {
-          greatestMag = element.mag
+        if element.mag > greatestX {
+          greatestX = element.mag
         }
       }
+
       let xAxis = ()
-      let furthestNeg = -(greatestMag)
+      let yAxis = ()
 
-      // Fix for weird numbers :)
-      let furthestNeg = calc.round(furthestNeg)
-      let greatestMag = calc.round(greatestMag)
+      let smallestX = if (xlimits != none) { xlimits.from } else { calc.round(-(greatestX)) }
+      let greatestX = if (xlimits != none) { xlimits.to } else { calc.round((greatestX)) }
+      let smallestY = if (ylimits != none) { ylimits.from } else { calc.round(-(greatestX)) }
+      let greatestY = if (ylimits != none) { ylimits.to } else { calc.round((greatestX)) }
 
-      while (furthestNeg <= greatestMag) {
-        let x = furthestNeg
-        let ct = $furthestNeg$
+      let xStepper = smallestX
+      while (xStepper <= greatestX) {
+        let x = xStepper
+        let ct = $xStepper$
         let res = (x, ct)
         xAxis.push(res)
-        furthestNeg += 0.5
+        xStepper += 0.5
       }
+
+      let yStepper = smallestX
+      while (yStepper <= greatestY) {
+        let y = yStepper
+        let ct = $yStepper$
+        let res = (y, ct)
+        yAxis.push(res)
+        yStepper += 0.5
+      }
+
       set-style(
         mark: (fill: black, scale: .75),
         stroke: (thickness: 0.4pt, cap: "round"),
@@ -58,13 +72,20 @@
         label: true,
         colour: none,
         arcPath: none,
-        labelOffset: (x: 0pt, y: 0pt, r: 0deg),
+        labelOffset: none,
       ) = {
         let getColour = (angle, saturation: 100%, value: 75%, alpha: 100%) => {
           if (colour != none) { colour.transparentize(100% - alpha) } else {
             color.hsv(angle * autoHueScale, saturation, if (greyscale) { 0% } else { value }, alpha)
           }
         }
+        on-layer(1, line(
+          (0, 0),
+          (mag * calc.cos(angle), mag * calc.sin(angle)),
+          mark: (end: "stealth"),
+          stroke: { getColour(angle) },
+          name: "phasorLine",
+        ))
 
         if traces {
           line(
@@ -81,7 +102,17 @@
         }
         if (label != none) {
           content(
-            ((mag * 1.15) * calc.cos(angle), (mag * 1.15) * calc.sin(angle)),
+            // ("phasorLine.start",110%,"phasorLine.end"),
+            (
+              (
+                mag * calc.cos(angle) * length * 1.1
+              )
+                + labelOffset.x,
+              (
+                mag * calc.sin(angle) * length * 1.1
+              )
+                + labelOffset.y,
+            ),
             text(getColour(angle), .8em)[#label],
             anchor: "north",
           )
@@ -123,19 +154,16 @@
             anchor: "south",
           )
         }
-        line(
-          (0, 0),
-          (mag * calc.cos(angle), mag * calc.sin(angle)),
-          mark: (end: "stealth"),
-          stroke: { getColour(angle) },
-        )
       }
 
       grid(
-        (-(greatestMag + 0.5), -(greatestMag + 0.5)),
         (
-          (greatestMag + 0.5),
-          (greatestMag + 0.5),
+          if (xlimits != none) { xlimits.from } else { -(greatestX + 0.5) },
+          if (ylimits != none) { ylimits.from } else { -(greatestX + 0.5) },
+        ),
+        (
+          if (xlimits != none) { xlimits.to } else { greatestX + 0.5 },
+          if (ylimits != none) { ylimits.to } else { greatestX + 0.5 },
         ),
         step: 0.25,
         stroke: gray + 0.02em,
@@ -143,24 +171,48 @@
 
       // circle((0,0), radius: 1)
 
-      line((-(greatestMag + 0.5), 0), ((greatestMag + 0.5), 0), mark: (start: "stealth", end: "stealth"))
+      // --- Draws the x axis line ---
+      line(
+        name: "xAxisLine",
+        (
+          if (xlimits != none) { xlimits.from } else { -(greatestX + 0.5) },
+          0,
+        ),
+        (
+          if (xlimits != none) { xlimits.to } else { (greatestX + 0.5) },
+          0,
+        ),
+        mark: (start: if (smallestX < 0) { "stealth" }, end: if (greatestX > 0) { "stealth" }),
+      )
       content((), axesLabels.at(0), anchor: "west")
-      line((0, -(greatestMag + 0.5)), (0, (greatestMag + 0.5)), mark: (start: "stealth", end: "stealth"))
+
+      // --- Draws the y axis line ---
+      line(
+        name: "yAxisLine",
+        (
+          0,
+          if (ylimits != none) { ylimits.from } else { -(greatestX + 0.5) },
+        ),
+        (
+          0,
+          if (ylimits != none) { ylimits.to } else { (greatestX + 0.5) },
+        ),
+        mark: (start: if (smallestY < 0) { "stealth" }, end: if (greatestY > 0) { "stealth" }),
+      )
       content((), axesLabels.at(1), anchor: "south")
 
       for (x, ct) in xAxis {
-        line((x, .3em), (x, -.3em))
+        line((x, .3em), (x, -.3em), stroke: if (x == 0) { 0pt } else { .2pt })
         content((), anchor: if (x == 0) { "north-east" } else { "north" }, text(.6em, ct))
       }
 
-      for (y, ct) in xAxis {
+      for (y, ct) in yAxis {
         if (y != 0) {
           line((3pt, y), (-3pt, y))
           content((), anchor: "east", text(.6em, ct))
         }
       }
 
-      // Draw the green angle
 
       set-style(stroke: (thickness: 1.2pt))
       // phasor(calc.pi/2)
@@ -201,6 +253,7 @@
             }
           }
         }
+
         phasor(
           element.mag,
           element.angle,
@@ -211,6 +264,15 @@
           },
           arcPath: if ("arc" in element) { if (element.arc != none) { element.arc } } else {
             none
+          },
+          labelOffset: if ("labelOffset" in element) {
+            (
+              x: if ("x" in element.labelOffset) { element.labelOffset.x } else { 0pt },
+              y: if ("y" in element.labelOffset) { element.labelOffset.y } else { 0pt },
+              r: if ("r" in element.labelOffset) { element.labelOffset.r } else { 0deg },
+            )
+          } else {
+            (x: 0pt, y: 0pt, r: 0deg)
           },
         )
       }
