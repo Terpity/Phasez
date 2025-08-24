@@ -11,6 +11,7 @@
   greyscale: false,
   length: 5cm,
   autoHueScale: 4,
+  step: 0.5,
   phasors: {},
 ) => {
   cetz.canvas(
@@ -21,37 +22,150 @@
       //   size: 15pt,
       // )
       let greatestX = 0
+      let smallestX = 0
+      let greatestY = 0
+      let smallestY = 0
       for element in phasors {
         if element.mag > greatestX {
           greatestX = element.mag
+          greatestY = element.mag
         }
       }
 
       let xAxis = ()
       let yAxis = ()
 
-      let smallestX = if (xlimits != none) { xlimits.from } else { calc.round(-(greatestX)) }
-      let greatestX = if (xlimits != none) { xlimits.to } else { calc.round((greatestX)) }
-      let smallestY = if (ylimits != none) { ylimits.from } else { calc.round(-(greatestX)) }
-      let greatestY = if (ylimits != none) { ylimits.to } else { calc.round((greatestX)) }
+      if (xlimits != none) {
+        if type(xlimits) == dictionary {
+          if (xlimits.to > xlimits.from) {
+            smallestX = xlimits.from
+            greatestX = xlimits.to
+          } else if (xlimits.to < xlimits.from) {
+            smallestX = xlimits.to
+            greatestX = xlimits.from
+          }
+        } else if (type(xlimits) == int or type(xlimits) == float) {
+          smallestX = -calc.abs(xlimits)
+          greatestX = calc.abs(xlimits)
+        }
+      } else {
+        smallestX = -greatestX
+      }
 
-      let xStepper = smallestX
-      while (xStepper <= greatestX) {
-        let x = xStepper
-        let ct = $xStepper$
+      if (ylimits != none) {
+        if type(ylimits) == dictionary {
+          if (ylimits.to > ylimits.from) {
+            smallestY = ylimits.from
+            greatestY = ylimits.to
+          } else if (ylimits.to < ylimits.from) {
+            smallestY = ylimits.to
+            greatestY = ylimits.from
+          }
+        } else if (type(ylimits) == int or type(ylimits) == float) {
+          smallestY = -calc.abs(ylimits)
+          greatestY = calc.abs(ylimits)
+        }
+      } else {
+        greatestY = calc.abs(greatestY)
+        smallestY = -calc.abs(greatestY)
+      }
+
+      // let smallestX = if (xlimits != none) {
+      //   if (xlimits.to < xlimits.from) { xlimits.to } else { xlimits.from }
+      // } else { calc.round(-(greatestX)) }
+      // let greatestX = if (xlimits != none) {
+      //   if (xlimits.from > xlimits.to) { xlimits.from } else { xlimits.to }
+      // } else { calc.round((greatestX)) }
+      // let smallestY = if (ylimits != none) {
+      //   if (ylimits.to < ylimits.from) { ylimits.to } else { ylimits.from }
+      // } else { calc.round(-(greatestX)) }
+      // let greatestY = if (ylimits != none) {
+      //   if (ylimits.from > ylimits.to) { ylimits.from } else { ylimits.to }
+      // } else { calc.round((greatestX)) }
+
+      // Set default label step values
+      let xStep = .5
+      let yStep = .5
+
+      // Overwrite them with any user-defined values
+      if (type(step) == dictionary) {
+        if ("x" in step) {
+          xStep = step.x
+        }
+        if ("y" in step) {
+          yStep = step.y
+        }
+      } else if (type(step) == int or type(step) == float) {
+        xStep = step
+        yStep = step
+      }
+
+      // Generate labels for -x, +x, -y, +y directions by stepping out from zero until reaching the furthest distances
+
+      let negXLabels = ()
+      let negXStepper = 0
+      while (negXStepper >= smallestX) {
+        let x = negXStepper
+        let roundedct = calc.round(negXStepper, digits: 2)
+        let ct = $roundedct$
         let res = (x, ct)
-        xAxis.push(res)
-        xStepper += 0.5
+        negXLabels.push(res)
+        negXStepper -= xStep
       }
 
-      let yStepper = smallestY
-      while (yStepper <= greatestY) {
-        let y = yStepper
-        let ct = $yStepper$
-        let res = (y, ct)
-        yAxis.push(res)
-        yStepper += 0.5
+      let posXLabels = ()
+      let posXStepper = 0
+      while (posXStepper <= greatestX) {
+        let x = posXStepper
+        let roundedct = calc.round(posXStepper, digits: 2)
+        let ct = $roundedct$
+        let res = (x, ct)
+        posXLabels.push(res)
+        posXStepper += xStep
       }
+
+      let negYLabels = ()
+      let negYStepper = 0
+      while (negYStepper >= smallestY) {
+        let y = negYStepper
+        let roundedct = calc.round(negYStepper, digits: 2)
+        let ct = $roundedct$
+        let res = (y, ct)
+        negYLabels.push(res)
+        negYStepper -= yStep
+      }
+
+      let posYLabels = ()
+      let posYStepper = 0
+      while (posYStepper <= greatestY) {
+        let y = posYStepper
+        let roundedct = calc.round(posYStepper, digits: 2)
+        let ct = $roundedct$
+        let res = (y, ct)
+        posYLabels.push(res)
+        posYStepper += yStep
+      }
+
+
+      // let xStepper = smallestX
+      // while (xStepper <= greatestX) {
+      //   let x = xStepper
+      //   let roundedct = calc.round(xStepper, digits: 2)
+      //   let ct = $roundedct$
+      //   let res = (x, ct)
+      //   xAxis.push(res)
+      //   xStepper += step
+      // }
+
+      // let yStepper = smallestY
+      // while (yStepper <= greatestY) {
+      //   let y = yStepper
+      //   let roundedct = calc.round(xStepper, digits: 2)
+      //   let ct = $roundedct$
+      //   let res = (y, ct)
+      //   yAxis.push(res)
+      //   yStepper += 0.5
+      // }
 
       set-style(
         mark: (fill: black, scale: .75),
@@ -115,6 +229,7 @@
               )
                 + labelOffset.y,
             ),
+            angle: labelOffset.r,
             text(getColour(angle), .8em)[#prefix#label#suffix],
             anchor: "north",
           )
@@ -158,18 +273,72 @@
         }
       }
 
+
       grid(
         (
-          if (xlimits != none) { xlimits.from } else { -(greatestX + 0.5) },
-          if (ylimits != none) { ylimits.from } else { -(greatestX + 0.5) },
+          0,
+          0,
         ),
         (
-          if (xlimits != none) { xlimits.to } else { greatestX + 0.5 },
-          if (ylimits != none) { ylimits.to } else { greatestX + 0.5 },
+          greatestX,
+          greatestY,
         ),
         step: 0.25,
         stroke: gray + 0.02em,
       )
+      group({
+        set-origin((smallestX, 0, 0))
+        scale(x: -100%)
+        // set-origin((0, 0, 0))
+        grid(
+          (
+            0,
+            0,
+          ),
+          (
+            smallestX,
+            greatestY,
+          ),
+          step: 0.25,
+          stroke: gray + 0.02em,
+        )
+        scale(x: 100%, y: 100%)
+      })
+
+      // scale(x: -100%, y: -100%)
+      group({
+        set-origin((smallestX, smallestY, 0))
+        scale(x: -100%, y: -100%)
+        grid(
+          (
+            0,
+            0,
+          ),
+          (
+            smallestX,
+            smallestY,
+          ),
+          step: 0.25,
+          stroke: gray + 0.02em,
+        )
+      })
+      group({
+        set-origin((0, smallestY, 0))
+        scale(x: 100%, y: -100%)
+        grid(
+          (
+            0,
+            0,
+          ),
+          (
+            greatestX,
+            smallestY,
+          ),
+          step: 0.25,
+          stroke: gray + 0.02em,
+        )
+      })
+      // scale(x: 100%, y: 100%)
 
       // circle((0,0), radius: 1)
 
@@ -177,11 +346,11 @@
       line(
         name: "xAxisLine",
         (
-          if (xlimits != none) { xlimits.from } else { -(greatestX + 0.5) },
+          if (xlimits != none) { smallestX } else { smallestX },
           0,
         ),
         (
-          if (xlimits != none) { xlimits.to } else { (greatestX + 0.5) },
+          if (xlimits != none) { greatestX } else { greatestX },
           0,
         ),
         mark: (start: if (smallestX < 0) { "stealth" }, end: if (greatestX > 0) { "stealth" }),
@@ -193,22 +362,34 @@
         name: "yAxisLine",
         (
           0,
-          if (ylimits != none) { ylimits.from } else { -(greatestX + 0.5) },
+          if (ylimits != none) { smallestY } else { smallestY },
         ),
         (
           0,
-          if (ylimits != none) { ylimits.to } else { (greatestX + 0.5) },
+          if (ylimits != none) { greatestY } else { greatestY },
         ),
         mark: (start: if (smallestY < 0) { "stealth" }, end: if (greatestY > 0) { "stealth" }),
       )
       content((), axesLabels.at(1), anchor: /*if (greatestY <= 0) { "north" } else {*/ "south" /*}*/)
 
-      for (x, ct) in xAxis {
+      for (x, ct) in negXLabels {
         line((x, .3em), (x, -.3em), stroke: if (x == 0) { 0pt } else { .2pt })
         content((), anchor: if (x == 0) { "north-east" } else { "north" }, text(.6em, ct))
       }
 
-      for (y, ct) in yAxis {
+      for (x, ct) in posXLabels {
+        line((x, .3em), (x, -.3em), stroke: if (x == 0) { 0pt } else { .2pt })
+        content((), anchor: if (x == 0) { "north-east" } else { "north" }, text(.6em, ct))
+      }
+
+      for (y, ct) in negYLabels {
+        if (y != 0) {
+          line((3pt, y), (-3pt, y))
+          content((), anchor: "east", text(.6em, ct))
+        }
+      }
+
+      for (y, ct) in posYLabels {
         if (y != 0) {
           line((3pt, y), (-3pt, y))
           content((), anchor: "east", text(.6em, ct))
