@@ -44,7 +44,7 @@
     step: .24,
     autoHueScale: 5,
     greyscale: true,
-    length: 5cm,
+    length: 6cm,
     phasors: (
       // (
       //   mag: 0.45,
@@ -66,10 +66,11 @@
   phasez.phasorPlot(
     autoHueScale: 5,
     greyscale: true,
-    scaleFactor: 2,
-    step: 10,
-    gridstep: 2.5,
-    length: .15cm,
+    scaleFactor: 50,
+    step: 5,
+    gridstep: 5,
+    fontSize: 15pt,
+    length: 7cm,
     phasors: (
       // (
       //   mag: 0.45,
