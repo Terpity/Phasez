@@ -66,22 +66,14 @@
   phasez.phasorPlot(
     autoHueScale: 5,
     greyscale: true,
-    scaleFactor: 50,
-    step: 5,
+    step: 10,
     gridstep: 5,
-    fontSize: 15pt,
+    fontSize: 20pt,
     length: 7cm,
     phasors: (
-      // (
-      //   mag: 0.45,
-      //   angle: 75deg,
-      //   arc: (
-      //     label: [Custom label],
-      //     labelOffset: (x: 0pt, y: 5pt, r: -45deg),
-      //   ),
-      // ),
       (mag: 50, angle: 45deg, colour: orange, label: none, arc: (start: 180deg, colour: red, rad: .6cm)),
     ),
   ),
-  caption: [For large phasors, until an auto-scale is implemented, you can use `scaleFactor`, `step`, `gridstep`, and `length` to show large phasors on a more reasonable background],
+  caption: [],
 )
+

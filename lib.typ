@@ -6,10 +6,10 @@
 #let phasorPlot = (
   showLabels: true,
   axesLabels: ($Re$, $Im$),
-  fontSize: 8pt,
+  fontSize: 15pt,
   xlimits: none,
   ylimits: none,
-  scaleFactor: 1,
+  scaleFactor: none,
   greyscale: false,
   length: 5cm,
   autoHueScale: 4,
@@ -37,12 +37,33 @@
             greatestY = element.mag
           }
         }
+        let greatestMag = 0
+        if (scaleFactor == none) {
+          for element in phasors {
+            if element.mag > greatestMag {
+              greatestMag = element.mag
+            }
+          }
+          scaleFactor = greatestMag
+        }
+
 
         let xAxis = ()
         let yAxis = ()
 
         let xscale = 1
         let yscale = 1
+
+        let xgridstep = .25
+        let ygridstep = .25
+
+        if (type(gridstep) == dictionary) {
+          xgridstep = if ("x" in gridstep) { gridstep.x } else { .25 }
+          ygridstep = if ("y" in gridstep) { gridstep.y } else { 1 }
+        } else {
+          xgridstep = gridstep
+          ygridstep = gridstep
+        }
 
         if (type(scaleFactor) == dictionary) {
           xscale = if ("x" in scaleFactor) { scaleFactor.x } else { 1 }
@@ -307,7 +328,7 @@
               greatestX / xscale,
               greatestY / yscale,
             ),
-            step: (gridstep / xscale, gridstep / yscale),
+            step: (xgridstep / xscale, ygridstep / yscale),
             stroke: gray + 0.02em,
           )
         })
@@ -325,7 +346,7 @@
               smallestX / xscale,
               greatestY / yscale,
             ),
-            step: (gridstep / xscale, gridstep / yscale),
+            step: (xgridstep / xscale, ygridstep / yscale),
             stroke: gray + 0.02em,
           )
           scale(x: 100%, y: 100%)
@@ -344,7 +365,7 @@
               smallestX / xscale,
               smallestY / yscale,
             ),
-            step: (gridstep / xscale, gridstep / yscale),
+            step: (xgridstep / xscale, ygridstep / yscale),
             stroke: gray + 0.02em,
           )
         })
@@ -360,7 +381,7 @@
               greatestX / xscale,
               smallestY / yscale,
             ),
-            step: (gridstep / xscale, gridstep / yscale),
+            step: (xgridstep / xscale, ygridstep / yscale),
             stroke: gray + 0.02em,
           )
         })
