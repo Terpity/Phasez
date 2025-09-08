@@ -302,8 +302,16 @@
 
             content(
               (
-                arcPath.rad * 1.1 * calc.cos(arcPath.end - (arcPath.end - arcPath.start) / 2) + arcPath.labelOffset.x,
-                arcPath.rad * 1 * calc.sin(arcPath.end - (arcPath.end - arcPath.start) / 2) + arcPath.labelOffset.y,
+                (
+                  arcPath.rad * calc.cos(arcPath.end - (arcPath.end - arcPath.start) / 2) * 1pt * xscale / 14
+                )
+                  + arcPath.labelOffset.x,
+                (
+                  arcPath.rad * calc.sin(arcPath.end - (arcPath.end - arcPath.start) / 2) * 1pt * yscale / 14
+                )
+                  + arcPath.labelOffset.y,
+                // arcPath.rad * 1.1 * calc.cos(arcPath.end - (arcPath.end - arcPath.start) / 2) + arcPath.labelOffset.x,
+                // arcPath.rad * 1 * calc.sin(arcPath.end - (arcPath.end - arcPath.start) / 2) + arcPath.labelOffset.y,
               ),
               angle: arcPath.labelOffset.r,
               text(size: .5em)[
@@ -458,7 +466,15 @@
           }
           if ("arc" in element) {
             if (element.arc == true) {
-              element.arc = (start: 0deg, end: element.angle, rad: 1em, label: "", doFill: true)
+              element.arc = (
+                start: 0deg,
+                end: element.angle,
+                rad: element.mag / 2,
+                label: true,
+                doFill: true,
+                colour: element.colour,
+                labelOffset: (x: 0pt, y: 0pt, r: 0deg),
+              )
             } else if (element.arc == false) {
               element.arc = none
             } else {
@@ -472,7 +488,7 @@
                 element.arc.rad = 3em
               }
               if ("label" not in element.arc) {
-                element.arc.label = ""
+                element.arc.label = true
               }
               if ("doFill" not in element.arc) {
                 element.arc.doFill = true
@@ -481,7 +497,7 @@
                 element.arc.labelOffset = (x: 0em, y: 0em, r: 0deg)
               }
               if ("colour" not in element.arc) {
-                element.arc.colour = none
+                element.arc.colour = element.colour
               }
             }
           }
