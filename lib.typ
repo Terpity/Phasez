@@ -223,8 +223,10 @@
           traces: false,
           prefix: none,
           label: true,
+          labelSize: 0.5em,
           suffix: none,
           colour: none,
+          lineDash: "solid",
           arcPath: none,
           labelOffset: none,
         ) = {
@@ -237,7 +239,7 @@
             (0, 0),
             (mag * calc.cos(angle) / xscale, mag * calc.sin(angle) / yscale),
             mark: (end: "stealth"),
-            stroke: { getColour(angle) },
+            stroke: (paint: getColour(angle), dash: lineDash),
             name: "phasorLine",
           ))
 
@@ -268,7 +270,7 @@
                   + labelOffset.y,
               ),
               angle: labelOffset.r,
-              text(getColour(angle), .8em)[#prefix#label#suffix],
+              text(getColour(angle), labelSize)[#prefix#label#suffix],
               anchor: "north",
             )
           }
@@ -488,6 +490,9 @@
             element.mag,
             element.angle,
             colour: if ("colour" in element) { element.colour } else { none },
+            lineDash: if ("lineDash" in element) {
+              element.lineDash
+            } else { none },
             traces: if ("traces" in element) { element.traces } else { false },
             label: if ("label" in element) {
               if (element.label == true) {
@@ -498,6 +503,9 @@
                 }
               }
             } else {},
+            labelSize: if ("labelSize" in element) {
+              element.labelSize
+            } else { 0.5em },
             arcPath: if ("arc" in element) { if (element.arc != none) { element.arc } } else {
               none
             },
