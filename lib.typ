@@ -431,12 +431,20 @@
 
         for (x, ct) in negXLabels {
           line((x, .3em), (x, -.3em), stroke: if (x == 0) { 0pt } else { .2pt })
-          content((), anchor: if (x == 0) { "north-east" } else { "north" }, text(.6em, ct))
+          content(
+            (),
+            anchor: if (x == 0) { if (smallestX >= 0) { "south-east" } else { "north-east" } } else { "north" },
+            text(.6em, ct),
+          )
         }
 
         for (x, ct) in posXLabels {
           line((x, .3em), (x, -.3em), stroke: if (x == 0) { 0pt } else { .2pt })
-          content((), anchor: if (x == 0) { "north-east" } else { "north" }, text(.6em, ct))
+          content(
+            (),
+            anchor: if (x == 0) { if (smallestX >= 0) { "south-east" } else { "north-east" } } else { "north" },
+            text(.6em, ct),
+          )
         }
 
         for (y, ct) in negYLabels {
