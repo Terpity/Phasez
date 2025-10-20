@@ -412,7 +412,7 @@
           ),
           mark: (start: if (smallestX < 0) { "stealth" }, end: if (greatestX > 0) { "stealth" }),
         )
-        content((), axesLabels.at(0), anchor: "west")
+        content((), text(size: .8em)[#axesLabels.at(0)], anchor: "west")
 
         // --- Draws the y axis line ---
         line(
@@ -427,7 +427,11 @@
           ),
           mark: (start: if (smallestY < 0) { "stealth" }, end: if (greatestY > 0) { "stealth" }),
         )
-        content((), axesLabels.at(1), anchor: /*if (greatestY <= 0) { "north" } else {*/ "south" /*}*/)
+        content(
+          (),
+          text(size: .8em)[#axesLabels.at(1)],
+          anchor: /*if (greatestY <= 0) { "north" } else {*/ "south", /*}*/
+        )
 
         for (x, ct) in negXLabels {
           line((x, .3em), (x, -.3em), stroke: if (x == 0) { 0pt } else { .2pt })
