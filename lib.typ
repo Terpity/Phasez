@@ -220,6 +220,7 @@
         let phasor(
           mag,
           angle,
+          origin: (0, 0),
           traces: false,
           prefix: none,
           label: true,
@@ -237,8 +238,8 @@
             }
           }
           on-layer(1, line(
-            (0, 0),
-            (mag * calc.cos(angle) / xscale, mag * calc.sin(angle) / yscale),
+            (origin.at(0) / xscale, origin.at(1) / yscale),
+            ((mag * calc.cos(angle) + origin.at(0)) / xscale, (mag * calc.sin(angle) + origin.at(1)) / yscale),
             mark: (end: "stealth"),
             stroke: (paint: getColour(angle), dash: lineDash),
             name: "phasorLine",
@@ -246,14 +247,14 @@
 
           if traces {
             line(
-              (mag * calc.cos(angle) / xscale, mag * calc.sin(angle) / yscale),
+              ((mag * calc.cos(angle) + origin.at(0)) / xscale, (mag * calc.sin(angle) + origin.at(1)) / yscale),
               ((), "|-", (0, 0)),
               stroke: (.1em + red.transparentize(30%)),
               name: "sin",
             )
             line("sin.end", (0, 0), stroke: (.1em + blue.transparentize(30%)), name: "cos")
-            let xVal = calc.round(mag * calc.cos(angle), digits: 3)
-            let yVal = calc.round(mag * calc.sin(angle), digits: 3)
+            let xVal = calc.round(mag * calc.cos(angle) + origin.at(0), digits: 3)
+            let yVal = calc.round(mag * calc.sin(angle) + origin.at(1), digits: 3)
             content(("cos.start", 50%, "cos.end"), text(.5em, fill: blue, $xVal$))
             content(("sin.start", 50%, "sin.end"), text(.5em, fill: red, $yVal$))
           }
@@ -262,7 +263,7 @@
               // ("phasorLine.start",110%,"phasorLine.end"),
               (
                 (
-                  mag * calc.cos(angle) * length * 1.1 / xscale
+                  (mag * calc.cos(angle) * length * 1.1) / xscale
                 )
                   + labelOffset.x,
                 (
@@ -556,6 +557,7 @@
             suffix: if ("suffix" in element) {
               element.suffix
             } else { none },
+            origin: if ("origin" in element) { element.origin } else { (0, 0) },
           )
         }
       },
