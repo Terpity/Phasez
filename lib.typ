@@ -224,11 +224,12 @@
           prefix: none,
           label: true,
           labelSize: 0.5em,
+          labelOffset: none,
+          labelColour: none,
           suffix: none,
           colour: none,
           lineDash: "solid",
           arcPath: none,
-          labelOffset: none,
         ) = {
           let getColour = (angle, saturation: 100%, value: 75%, alpha: 100%) => {
             if (colour != none) { colour.transparentize(100% - alpha) } else {
@@ -270,7 +271,7 @@
                   + labelOffset.y,
               ),
               angle: labelOffset.r,
-              text(getColour(angle), labelSize)[#prefix#label#suffix],
+              text(if (labelColour != none) { labelColour } else { getColour(angle) }, labelSize)[#prefix#label#suffix],
               anchor: "north",
             )
           }
@@ -546,6 +547,9 @@
             } else {
               (x: 0pt, y: 0pt, r: 0deg)
             },
+            labelColour: if ("labelColour" in element) {
+              element.labelColour
+            } else { none },
             prefix: if ("prefix" in element) {
               element.prefix
             } else { none },
