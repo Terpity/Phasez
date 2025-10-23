@@ -1,4 +1,3 @@
-#import "@preview/elembic:1.1.1"
 #import "@preview/cetz:0.4.1"
 #set page(width: auto, height: auto, margin: .5cm)
 
