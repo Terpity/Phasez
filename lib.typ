@@ -305,11 +305,11 @@
             content(
               (
                 (
-                  arcPath.rad * calc.cos(arcPath.end - (arcPath.end - arcPath.start) / 2) * 1pt * xscale / 14
+                  arcPath.rad * calc.cos(arcPath.end - (arcPath.end - arcPath.start) / 2) * 1 * xscale / 14
                 )
                   + arcPath.labelOffset.x,
                 (
-                  arcPath.rad * calc.sin(arcPath.end - (arcPath.end - arcPath.start) / 2) * 1pt * yscale / 14
+                  arcPath.rad * calc.sin(arcPath.end - (arcPath.end - arcPath.start) / 2) * 1 * yscale / 14
                 )
                   + arcPath.labelOffset.y,
                 // arcPath.rad * 1.1 * calc.cos(arcPath.end - (arcPath.end - arcPath.start) / 2) + arcPath.labelOffset.x,
