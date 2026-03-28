@@ -1,24 +1,6 @@
 #import "../lib.typ" as phasez
 
 #figure(
-<<<<<<< HEAD
-  scale(
-    100%,
-    phasorPlot(
-      autoHueScale: 5,
-      greyscale: true,
-      length: 4cm,
-      phasors: (
-        (
-          mag: 0.645,
-          angle: 75deg,
-          arc: (
-            label: [Custom label],
-            labelOffset: (x: 0pt, y: 5pt, r: -45deg),
-          ),
-        ),
-        (mag: 1.4, angle: 120deg, colour: orange, label: none, arc: (start: 180deg, colour: red)),
-=======
   phasez.phasorPlot(
     length: 4cm,
     phasors: (
@@ -48,7 +30,6 @@
           colour: orange,
           labelOffset: (x: 10pt, y: 0pt, r: 0deg),
         ),
->>>>>>> scaleFix
       ),
       (mag: 0.78, angle: ((calc.pi / 6) * 1rad), label: true, labelOffset: (x: -10pt, y: 5pt)),
     ),
